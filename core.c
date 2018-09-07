@@ -35,7 +35,42 @@ int is_number_convertable(const char * string) {
 }
 
 char encrypt_character(char source, int key) {
-    return source;
+    char convert = source; // the char we are encrypting
+    
+    if (key > 26) // if the key is large
+    {
+        key = key % 26;
+    }
+    else if (key <= 0) // if the key is negative or zero
+    {
+        return source; //do not offset
+    }
+    
+    if (source >= 'A' && source <= 'Z') //uppercase letter
+    {
+        convert += key; //offset the char
+        if ((int)convert > 90)
+        {
+            int overflow = (int)convert - 90;
+            convert = 64 + overflow;
+        }
+        return convert;
+    }
+    else if (source >= 'a' && source <= 'z') //lowercase letter
+    {
+        convert += key; //offset the char
+        if ((int)convert > 122)
+        {
+            int overflow = (int)convert - 122;
+            convert = 96 + overflow;
+        }
+        return convert;
+    }
+    else //symbol or punctuation
+    {
+        //do not encrypt
+        return source;
+    }
 }
 
 void encrypt_string(char * message, int key, int step) {
