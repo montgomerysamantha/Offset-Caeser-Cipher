@@ -70,8 +70,8 @@ char encrypt_character(char source, int key)
         convert += key; //offset the char
         if ((int)convert > LOWER_Z_VALUE)
         {
-            int overflow = (int)convert - 122;
-            convert = 96 + overflow;
+            int overflow = (int)convert - LOWER_Z_VALUE;
+            convert = LOWER_A_VALUE - 1 + overflow;
         }
         return convert;
     }
@@ -126,7 +126,6 @@ char decrypt_character(char source, int key)
     }
     else if (source >= 'a' && source <= 'z') //lowercase letter
     {
-      //TODO: FIX
         convert -= key; //offset the char
         if ((int)convert < LOWER_A_VALUE)
         {
@@ -144,6 +143,21 @@ char decrypt_character(char source, int key)
 
 void decrypt_string(char * message, int key, int step)
 {
+    //step is the amount we are incrementing each time
+    char curmsg[100]; //the current decrypted message we have so far
+
+    //for each char in the message
+    for (int i = 0; i <= strlen(message); i++)
+    {
+        //decryption section
+        char source = message[i]; //the encrypted char
+        curmsg[i] = decrypt_character(source, key); //add decrypted char to the current message
+
+        //key section
+        key += step; //add step to key to update
+    }
+
+    strncpy(message, curmsg, strlen(message)); //copy decrypted message (curmsg) to message
 }
 
 void print_usage()
