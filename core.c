@@ -20,6 +20,14 @@
 #define TRUE 1;
 #define FALSE 0;
 
+//Samantha's macros
+#define ALPHABET_LENGTH 26
+#define A_VALUE 65
+#define Z_VALUE 90
+
+#define LOWER_A_VALUE 97
+#define LOWER_Z_VALUE 122
+
 int is_number_convertable(const char * string) {
     int len = strlen(string);
     const char * s = string;
@@ -38,9 +46,9 @@ char encrypt_character(char source, int key)
 {
     char convert = source; // the char we are encrypting
 
-    if (key > 26) // if the key is large
+    if (key > ALPHABET_LENGTH) // if the key is large
     {
-        key = key % 26;
+        key = key % ALPHABET_LENGTH;
     }
     else if (key <= 0) // if the key is negative or zero
     {
@@ -50,17 +58,17 @@ char encrypt_character(char source, int key)
     if (source >= 'A' && source <= 'Z') //uppercase letter
     {
         convert += key; //offset the char
-        if ((int)convert > 90)
+        if ((int)convert > Z_VALUE)
         {
-            int overflow = (int)convert - 90;
-            convert = 64 + overflow;
+            int overflow = (int)convert - Z_VALUE;
+            convert = A_VALUE - 1 + overflow;
         }
         return convert;
     }
     else if (source >= 'a' && source <= 'z') //lowercase letter
     {
         convert += key; //offset the char
-        if ((int)convert > 122)
+        if ((int)convert > LOWER_Z_VALUE)
         {
             int overflow = (int)convert - 122;
             convert = 96 + overflow;
@@ -95,7 +103,43 @@ void encrypt_string(char * message, int key, int step)
 
 char decrypt_character(char source, int key)
 {
-    return source;
+    char convert = source; // the char we are decrypting
+
+    if (key > ALPHABET_LENGTH) // if the key is large
+    {
+        key = key % ALPHABET_LENGTH;
+    }
+    else if (key <= 0) // if the key is negative or zero
+    {
+        return source; //do not offset
+    }
+
+    if (source >= 'A' && source <= 'Z') //uppercase letter
+    {
+        convert -= key; //offset the char
+        if ((int)convert < A_VALUE)
+        {
+            int underflow = A_VALUE - (int)convert;
+            convert = Z_VALUE + 1 - underflow;
+        }
+        return convert;
+    }
+    else if (source >= 'a' && source <= 'z') //lowercase letter
+    {
+      //TODO: FIX
+        convert -= key; //offset the char
+        if ((int)convert < LOWER_A_VALUE)
+        {
+            int underflow = LOWER_A_VALUE - (int)convert;
+            convert = LOWER_Z_VALUE + 1 - underflow;
+        }
+        return convert;
+    }
+    else //symbol or punctuation
+    {
+        //do not encrypt
+        return source;
+    }
 }
 
 void decrypt_string(char * message, int key, int step)
