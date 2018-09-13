@@ -11,6 +11,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <stdbool.h>
+
 #include "core.h"
 
 #define CHARACTER_COUNT (LAST_CHARACTER - FIRST_CHARACTER + 1)
@@ -160,6 +162,17 @@ void decrypt_string(char * message, int key, int step)
     strncpy(message, curmsg, strlen(message)); //copy decrypted message (curmsg) to message
 }
 
+//function to convert const char * to lowercase
+void lowercase(const char *cstr)
+{
+    char *str = (char*)cstr;
+
+    while (*str) {
+        *str = tolower(*str);
+        ++str;
+    }
+}
+
 void print_usage()
 {
     printf("Usage:\n");
@@ -169,6 +182,62 @@ void print_usage()
 
 int core_main(int argc, const char * argv[])
 {
-    print_usage();
+    if (argv[1] == NULL || argv[2] == NULL || argv[3] == NULL || argv[4] == NULL)
+    {
+      printf("Missing arguments\n");
+      print_usage();
+    }
+    else
+    {
+      char type[10]; //the command line argument (encrypt or decrypt)
+      strcpy(type, argv[1]);
+      lowercase(type); //convert it to lowercase if user typed caps accidentally
+
+      char message[200]; //the message
+      strcpy(message, argv[2]); //copying argv[2] to message
+
+      char key[10];
+      strcpy(key, argv[3]); //copying argv[3] to key
+
+      char key_offset[10];
+      strcpy(key_offset, argv[4]); //the step
+
+      //start checking for other user errors now that we know arguments are not null
+      if (strcmp(type, "encrypt") != 0 && strcmp(type, "decrypt") != 0)
+      {
+        printf("Unknown command %s\n", argv[1]);
+        print_usage();
+      }
+      else if (strlen(message) > 100)
+      {
+        printf("Max message length is 100 characters\n");
+        print_usage();
+      }
+      else if (!is_number_convertable(key))
+      {
+        printf("Key must be an integer\n");
+        print_usage();
+      }
+      else if (!is_number_convertable(key_offset))
+      {
+        printf("Key offset must be an integer\n");
+        print_usage();
+      }
+      else
+      {
+        //no errors so call functions
+        if (strcmp(type, "encrypt") == 0)
+        {
+          encrypt_string(message, atoi(argv[3]), atoi(argv[4]));
+          printf("%s\n", message);
+        }
+        else //decrypt case
+        {
+          decrypt_string(message, atoi(argv[3]), atoi(argv[4]));
+          printf("%s\n", message);
+        }
+      }
+    }
+
     return 0;
 }
