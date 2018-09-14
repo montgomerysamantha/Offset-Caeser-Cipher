@@ -46,7 +46,7 @@ int is_number_convertable(const char * string) {
 
 char encrypt_character(char source, int key)
 {
-    char convert = source; // the char we are encrypting
+    int convert = source; // the char we are encrypting
 
     if (key > ALPHABET_LENGTH) // if the key is large
     {
@@ -54,7 +54,7 @@ char encrypt_character(char source, int key)
     }
     else if (key <= 0) // if the key is negative or zero
     {
-        return source; //do not offset
+        return (char)source; //do not offset
     }
 
     if (source >= 'A' && source <= 'Z') //uppercase letter
@@ -65,7 +65,7 @@ char encrypt_character(char source, int key)
             int overflow = (int)convert - Z_VALUE;
             convert = A_VALUE - 1 + overflow;
         }
-        return convert;
+        return (char)convert;
     }
     else if (source >= 'a' && source <= 'z') //lowercase letter
     {
@@ -75,12 +75,12 @@ char encrypt_character(char source, int key)
             int overflow = (int)convert - LOWER_Z_VALUE;
             convert = LOWER_A_VALUE - 1 + overflow;
         }
-        return convert;
+        return (char)convert;
     }
     else //symbol or punctuation
     {
         //do not encrypt
-        return source;
+        return (char)source;
     }
 }
 
